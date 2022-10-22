@@ -1,0 +1,20 @@
+---
+app_packages:
+  - php7.4 
+  - php7.4-fpm
+  - php7.4-zip
+  - php7.4-mbstring
+  - php7.4-tokenizer
+  - php7.4-mysql
+  - php7.4-gd
+  - php7.4-xml
+  - php7.4-bcmath
+  - php7.4-intl
+  - php7.4-curl
+  - nodejs 
+  - composer
+  - npm
+
+mailtrap_user: 4dbd0acd508166
+
+mailtrap_password: " {{ vault_mailtrap_password }}"

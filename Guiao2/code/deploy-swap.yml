@@ -1,0 +1,15 @@
+- name : Deploy database
+  hosts: db
+  become: yes
+  roles:
+   - db
+  tags:
+   - dbinstall 
+
+- name : Deploy app
+  hosts: app
+  roles:
+   - {role: app}
+   - {role: seed_app, when: "seed_data is defined"}
+  tags:
+   - appinstall

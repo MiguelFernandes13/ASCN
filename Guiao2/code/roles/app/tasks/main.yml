@@ -1,0 +1,58 @@
+---
+- name: get repo
+  become: yes
+  apt_repository:
+   repo: ppa:ondrej/php
+   state: present
+
+- name: apt update
+  become: yes
+  apt:
+   update_cache: yes
+   upgrade: no
+
+- name: install NodeJS, Composer and npm
+  become: yes
+  apt:
+   name: "{{ item }}"
+   state: latest
+  loop: "{{ app_packages }}"
+
+- name: Clone Swaps git repository
+  git:
+    repo: https://github.com/Hackathonners/swap.git
+    dest: ~/swap
+    
+- name: change the database configurations
+  template:
+   src: env_example
+   dest: ~/swap/.env
+
+- name: Composer install
+  shell:
+   cmd: composer install
+   chdir: ~/swap
+
+- name: npm install
+  shell:
+   cmd: npm install
+   chdir: ~/swap
+
+- name: generate the appplication's key 
+  shell:
+   cmd: php artisan key:generate
+   chdir: ~/swap
+  
+- name: run database migrations
+  shell:
+   cmd: php artisan migrate
+   chdir: ~/swap
+
+- name: Clean previous Swap servers
+  shell: killall -9 php7.4 && killall -9 php
+  ignore_errors: yes
+
+- name: start swap
+  shell:
+   cmd: nohup php artisan serve --host=0.0.0.0 > app_out.log 2>&1 &
+   chdir: ~/swap
